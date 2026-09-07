@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main, next]
+  pull_request:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.2'
+            symfony: '6.4.*'
+          - php: '8.2'
+            symfony: '7.4.*'
+          - php: '8.4'
+            symfony: '8.0.*'
+          - php: '8.5'
+            symfony: '8.1.*'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer:v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test release tools
+        run: python -m unittest discover -s tools -p 'test_*.py'
+      - run: composer validate --strict
+      - name: Install selected Symfony version
+        run: >-
+          composer update
+          --with='symfony/mailer:${{ matrix.symfony }}'
+          --with='symfony/mime:${{ matrix.symfony }}'
+          --with='symfony/http-client:${{ matrix.symfony }}'
+          --with='symfony/dependency-injection:${{ matrix.symfony }}'
+          --with='symfony/config:${{ matrix.symfony }}'
+          --with='symfony/yaml:${{ matrix.symfony }}'
+          --with='symfony/event-dispatcher:${{ matrix.symfony }}'
+          --with-all-dependencies --no-interaction --prefer-dist
+      - run: composer test
+      - run: composer analyse
+      - run: composer format-check
+      - run: composer audit
+      - run: php examples/standalone.php
+
+      - name: Build package
+        run: composer archive --format=zip --dir=artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-php-${{ matrix.php }}-symfony-${{ strategy.job-index }}
+          path: artifacts/*.zip
+          if-no-files-found: error
+          retention-days: 7

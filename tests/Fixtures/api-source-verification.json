@@ -1,0 +1,24 @@
+{
+  "api_revision": "ede4a421c1e811e5890e69956f3a3784205972b5",
+  "files": {
+    "laravel/routes/api/v1.php": "24c0136ff439d704712c2456996a5d7b809ddf7cf9444126f1621e2ff176468e",
+    "laravel/app/Http/Requests/Api/V1/SendMailRequest.php": "e38d98992023c2a71e8282c6098d4f3cc9aba616ed8bb94152513ff71d37cdde",
+    "laravel/app/Http/Controllers/Api/V1/SendMailController.php": "41bd495e24bd671de6ced2d7fc214af66237a6353c1b05b0fcaf5b6e2e1c780c",
+    "laravel/app/Services/Messages/MessageRules.php": "fece2faa7c3e436125d08d11d286079597634aa0edd360384b437c8f5fd81f4b",
+    "laravel/app/Enums/TlsPolicy.php": "8f9dbb179449f2203350f845a2463d541ccf5f1d30ee278bf3c23e2d29cb6aca",
+    "laravel/app/Data/MailerData.php": "7b889c73b040a9fdf540cc361cfa31ee081284a047849a1261d0743cd80ad856",
+    "laravel/app/Support/MessageTags.php": "1a25552e65048a8a4d5040344e20d234e664661f66abca9c8e8c1bbfa7754e10",
+    "laravel/app/Support/BlockedAttachmentTypes.php": "9514f649cae3d0be5f75ed5b1d50c534a75d68e1694cc99ba2ab21532bd1d370",
+    "laravel/app/Rules/Rfc2822Address.php": "572606ff3e8d242be527c5c6c87571ad8f32979916fd1cb0154fe5ff9ddb532b",
+    "laravel/app/Rules/Base64AttachmentRule.php": "8ebb9c0a66da4baaa8ee47dd8d02e720d79f8d47157d7204b59c9009ade59dd2",
+    "laravel/app/Rules/BlockedFileExtensionsRule.php": "4b5aa1a8a2fef1056eefef2fa25b7aba8aa44c0d94b580cf0c986116e9420655",
+    "laravel/app/Rules/NoNullBytes.php": "7af76e4983460a5d676b0defa8d3a9cd9ebb75c328e3acdcd67d91ec30b35dbf",
+    "laravel/app/Rules/RfcMessageIdHeaders.php": "2066835c9d7c5c465c0cca2b8ded7dc5569f6ea645708cfe5463cb21a1a0653e",
+    "laravel/app/Http/Requests/Concerns/ValidatesMessageTags.php": "3abc7eeb0ec2e5fe9d7a144df12c39c221cb1f16e19622b72d504fb7bd334965",
+    "laravel/composer.lock": "cedbc27d7f10fb9c288a76aef7274c7b9a7a8dbb8da8a8eba76c169c266d48e6"
+  },
+  "fixtures": {
+    "tests/Fixtures/api-source.json": "314c4b91b809973d97b4580168603bc0261b523cb5271b1c2059bb244474edfa",
+    "tests/Fixtures/request.json": "a24d535dcb823a81f21646c10c92fe565c6b1eca69f3be3cc6ee96f4fa0c3ea6"
+  }
+}

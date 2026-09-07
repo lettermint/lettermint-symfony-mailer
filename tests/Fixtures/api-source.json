@@ -1,0 +1,57 @@
+{
+    "immediate": {
+        "message_id": "00000000-0000-4000-8000-000000000001",
+        "status": "pending"
+    },
+    "scheduled": {
+        "message_id": "00000000-0000-4000-8000-000000000001",
+        "status": "scheduled",
+        "scheduled_at": "2026-09-08T12:00:00+00:00"
+    },
+    "request_fields": [
+        "route",
+        "from",
+        "to",
+        "to.*",
+        "cc",
+        "cc.*",
+        "bcc",
+        "bcc.*",
+        "reply_to",
+        "reply_to.*",
+        "subject",
+        "scheduled_at",
+        "headers",
+        "headers.*",
+        "metadata",
+        "metadata.*",
+        "tag",
+        "tags",
+        "tags.*",
+        "tags.*.name",
+        "tags.*.value",
+        "settings",
+        "settings.track_opens",
+        "settings.track_clicks",
+        "settings.tls",
+        "html",
+        "text",
+        "attachments",
+        "attachments.*",
+        "attachments.*.filename",
+        "attachments.*.content",
+        "attachments.*.content_type",
+        "attachments.*.content_id"
+    ],
+    "tls": [
+        "opportunistic",
+        "enforced"
+    ],
+    "route": {
+        "methods": [
+            "POST"
+        ],
+        "uri": "v1/send"
+    },
+    "request_validated": true
+}

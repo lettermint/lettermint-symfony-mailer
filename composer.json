@@ -1,0 +1,68 @@
+{
+    "name": "lettermint/symfony-mailer",
+    "description": "Lettermint API transport for Symfony Mailer",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "lettermint",
+        "symfony",
+        "mailer",
+        "email"
+    ],
+    "require": {
+        "php": "^8.2",
+        "psr/event-dispatcher": "^1.0",
+        "psr/log": "^1.1 || ^2.0 || ^3.0",
+        "symfony/http-client": "^6.4 || ^7.4 || ^8.0",
+        "symfony/http-client-contracts": "^3.0",
+        "symfony/mailer": "^6.4 || ^7.4 || ^8.0",
+        "symfony/mime": "^6.4 || ^7.4 || ^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5",
+        "phpstan/phpstan": "^2.1",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "symfony/dependency-injection": "^6.4 || ^7.4 || ^8.0",
+        "symfony/config": "^6.4 || ^7.4 || ^8.0",
+        "symfony/yaml": "^6.4 || ^7.4 || ^8.0",
+        "symfony/event-dispatcher": "^6.4 || ^7.4 || ^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lettermint\\SymfonyMailer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Lettermint\\SymfonyMailer\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse --memory-limit=512M",
+        "format": "php-cs-fixer fix",
+        "format-check": "php-cs-fixer fix --dry-run --diff"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {}
+    },
+    "archive": {
+        "exclude": [
+            "/vendor",
+            "/tests",
+            "/tools",
+            "/.github",
+            "/artifacts",
+            "/composer.lock",
+            "/.*",
+            "/phpunit.xml.dist",
+            "/phpstan.neon.dist"
+        ]
+    },
+    "homepage": "https://github.com/lettermint/lettermint-symfony-mailer",
+    "support": {
+        "issues": "https://github.com/lettermint/lettermint-symfony-mailer/issues",
+        "source": "https://github.com/lettermint/lettermint-symfony-mailer"
+    }
+}

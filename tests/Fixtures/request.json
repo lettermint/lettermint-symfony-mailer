@@ -1,0 +1,14 @@
+{
+    "from": "sender@example.com",
+    "to": ["recipient@example.com"],
+    "subject": "API contract test",
+    "text": "Contract body",
+    "metadata": {"order_id": "123"},
+    "headers": {"X-Contract": "yes"},
+    "tag": "receipt",
+    "route": "transactional",
+    "scheduled_at": "2026-09-08T12:00:00Z",
+    "settings": {"track_opens": false, "track_clicks": true, "tls": "enforced"},
+    "tags": [{"name": "campaign", "value": "launch"}],
+    "attachments": [{"filename": "test.txt", "content": "Q29udHJhY3QgYXR0YWNobWVudA==", "content_type": "text/plain"}]
+}

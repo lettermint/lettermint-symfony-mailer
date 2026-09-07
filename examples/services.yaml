@@ -1,0 +1,9 @@
+# Add this service to config/services.yaml in the Symfony application.
+services:
+    Lettermint\SymfonyMailer\Transport\LettermintTransportFactory:
+        autoconfigure: false
+        arguments:
+            $dispatcher: '@?event_dispatcher'
+            $client: '@http_client'
+            $logger: '@?logger'
+        tags: ['mailer.transport_factory']

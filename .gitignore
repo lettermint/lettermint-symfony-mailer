@@ -1,0 +1,10 @@
+/vendor/
+/composer.lock
+/.phpunit.cache/
+/.php-cs-fixer.cache
+/.phpstan/
+/artifacts/
+.env
+
+__pycache__/
+*.pyc
