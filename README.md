@@ -1,35 +1,31 @@
-# Lettermint Symfony Mailer bridge
+# Official Lettermint bridge for Symfony Mailer
 
-Send email through the Lettermint API with Symfony Mailer.
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/lettermint/symfony-mailer.svg?style=flat-square)](https://packagist.org/packages/lettermint/symfony-mailer)
+[![Tests](https://img.shields.io/github/actions/workflow/status/lettermint/lettermint-symfony-mailer/ci.yml?branch=main&label=tests&style=flat-square)](https://github.com/lettermint/lettermint-symfony-mailer/actions/workflows/ci.yml)
+[![Total Downloads](https://img.shields.io/packagist/dt/lettermint/symfony-mailer.svg?style=flat-square)](https://packagist.org/packages/lettermint/symfony-mailer)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
+[![Join our Discord server](https://img.shields.io/discord/1305510095588819035?logo=discord&logoColor=eee&label=Discord&labelColor=464ce5&color=0D0E28&cacheSeconds=43200)](https://lettermint.co/r/discord)
 
-- Composer package: `lettermint/symfony-mailer`
-- Namespace: `Lettermint\SymfonyMailer`
-- PHP 8.2 or later. Symfony Mailer 6.4, 7.4, or 8.x, with the PHP version required by that Symfony release.
+Send email with [Lettermint](https://lettermint.co) through Symfony Mailer.
 
-The package is not yet published to Packagist.
+---
 
-## Local installation
+## Requirements
 
-Add a path repository to your application's `composer.json`:
+- PHP 8.2 or later.
+- Symfony Mailer 6.4, 7.4, or 8.x, with the PHP version required by that Symfony release.
 
-```json
-{
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../lettermint-symfony-mailer",
-            "options": {"versions": {"lettermint/symfony-mailer": "0.1.0"}}
-        }
-    ],
-    "require": {
-        "lettermint/symfony-mailer": "^0.1"
-    }
-}
+## Installation
+
+Install the package with Composer:
+
+```sh
+composer require lettermint/symfony-mailer
 ```
 
-Run `composer update lettermint/symfony-mailer` in the application. Adjust the local path as required.
+## Configuration
 
-## Symfony application setup
+### Registering the Transport
 
 Add the factory service to `config/services.yaml`:
 
@@ -43,6 +39,8 @@ services:
             $logger: '@?logger'
         tags: ['mailer.transport_factory']
 ```
+
+### Setting Your Project Token
 
 Set the DSN in `.env.local`:
 
@@ -61,7 +59,11 @@ framework:
 
 The factory registration is required. Installing this third-party package alone does not add its factory to Symfony's built-in factory list.
 
-You can then use `MailerInterface` and `Email` as usual:
+## Usage
+
+### Sending Emails
+
+Use `MailerInterface` and `Email` to send an email:
 
 ```php
 use Symfony\Component\Mailer\MailerInterface;
@@ -80,7 +82,7 @@ function sendReceipt(MailerInterface $mailer): void
 }
 ```
 
-## Standalone Mailer
+### Standalone Mailer
 
 ```php
 use Lettermint\SymfonyMailer\Transport\LettermintTransportFactory;
@@ -95,7 +97,9 @@ $mailer->send($email);
 
 Use this registry to resolve the custom DSN. `Transport::fromDsn()` uses Symfony's built-in factories and does not discover this package.
 
-## Route and delivery settings
+## Email Options
+
+### Routes and Delivery Settings
 
 The DSN accepts `route`, `timeout`, `track_opens`, `track_clicks`, and `tls`:
 
@@ -122,7 +126,7 @@ The options header is removed from the delivered email. It supports `route`, `sc
 
 These options remain part of the email when it is serialized for Symfony Messenger. Set options and idempotency keys before the message enters the queue.
 
-## Tags, metadata, and idempotency
+### Tags and Metadata
 
 ```php
 use Symfony\Component\Mailer\Header\MetadataHeader;
@@ -135,9 +139,11 @@ $email->getHeaders()->addTextHeader('Idempotency-Key', 'receipt-123');
 
 `TagHeader` maps to the API's single `tag` field. If several are present, the last one wins, as in the Laravel driver. `X-LM-Tag` is a fallback. Use `OptionsHeader` for named `tags`. Each `MetadataHeader` adds one string entry to `metadata`.
 
+### Idempotency
+
 The idempotency key goes into the HTTP request header, not the delivered email. The bridge does not generate content-based keys or retry requests. A custom injected HTTP client can have its own retry policy. Use the same explicit key when your application repeats a send.
 
-## Recipients and attachments
+### Recipients and Attachments
 
 The transport uses the envelope sender and recipients. It includes CC and BCC only when those addresses remain in the envelope. This supports Symfony's recipient overrides without sending to excluded addresses. Address matching uses mailbox values, not PHP object identity. Duplicate envelope recipients are sent once.
 
@@ -147,15 +153,17 @@ Normal attachments, file attachments, stream attachments, and inline images are 
 
 Text and HTML emails are supported. Arbitrary raw MIME, signed/encrypted bodies, and unsupported MIME parts cannot be represented by the sending API.
 
-## Responses and failures
+## Responses
 
 Successful requests require HTTP 202 and a non-empty `message_id`. Calling `$transport->send($email)` returns a `SentMessage`; its `getMessageId()` returns the exact API ID. `MailerInterface::send()` returns no value. Use `SentMessageEvent` to read the ID in a Symfony application.
 
 The API ID is a transport ID. It is not changed into an RFC Message-ID. This differs from the Laravel driver's `@lmta.net` suffix. To preserve a custom email Message-ID at the API, include both the `Message-ID` and `X-LM-Preserve-Message-ID: true` headers.
 
+## Error Handling
+
 API failures raise `Lettermint\SymfonyMailer\Transport\ApiException`, a Symfony `TransportException`. It exposes `statusCode` and a token-redacted `responseBody`. Network failures raise `TransportException`. HTTP debug data is not attached to messages or exceptions because it can contain the project token. Redirects are disabled. Requests use the fixed HTTPS API endpoint.
 
-## Development
+## Testing
 
 ```sh
 composer install
@@ -169,6 +177,11 @@ php examples/standalone.php
 
 The standalone example uses a mock HTTP client by default. To send one real email, set `LETTERMINT_PROJECT_TOKEN`, `LETTERMINT_FROM`, `LETTERMINT_TO`, and `LETTERMINT_IDEMPOTENCY_KEY`, then run `php examples/standalone.php --send`.
 
+## Development
+
+<details>
+<summary>API contract checks</summary>
+
 The source contract test uses a payload accepted by the actual API's `MessageRules`, plus immediate and scheduled responses from `SendMailController`. The source record contains file and fixture hashes. To check the API checkout again:
 
 ```sh
@@ -180,3 +193,21 @@ This command also exports fresh controller responses and runs the API request ru
 The design follows Symfony's [Resend bridge](https://github.com/symfony/resend-mailer), [MailerSend bridge](https://github.com/symfony/mailer-send-mailer), and [custom transport factory interface](https://symfony.com/doc/current/mailer.html#custom-transport-factories). The Laravel driver's options and message mapping were also reviewed. The bridge has no Laravel or Lettermint PHP SDK dependency.
 
 See [.github/WORKFLOWS.md](.github/WORKFLOWS.md) for CI and release setup.
+
+</details>
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release changes.
+
+## Support
+
+For help, join the [Lettermint Discord server](https://lettermint.co/r/discord).
+
+## Credits
+
+- [Bjarn Bronsveld](https://github.com/bjarn)
+
+## License
+
+The MIT License (MIT). See [LICENSE](LICENSE) for details.

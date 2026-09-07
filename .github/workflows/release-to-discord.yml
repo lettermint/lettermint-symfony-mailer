@@ -1,10 +1,9 @@
 name: Release to Discord
 
 on:
-  workflow_call:
-    secrets:
-      DISCORD_RELEASE_WEBHOOK_URL:
-        required: false
+  release:
+    types: [published]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Check webhook configuration
         id: webhook
         env:
