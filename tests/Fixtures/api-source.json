@@ -21,6 +21,7 @@
         "reply_to.*",
         "subject",
         "scheduled_at",
+        "sandbox_result",
         "headers",
         "headers.*",
         "metadata",
