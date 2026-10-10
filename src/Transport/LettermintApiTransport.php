@@ -57,7 +57,7 @@ final class LettermintApiTransport extends AbstractApiTransport
     protected function doSendApi(SentMessage $sentMessage, Email $email, Envelope $envelope): ResponseInterface
     {
         $payload = $this->payloadBuilder->build($email, $envelope);
-        $headers = ['x-lettermint-token' => $this->projectToken, 'accept' => 'application/json', 'user-agent' => 'lettermint-symfony-mailer/0.1.0'];
+        $headers = ['x-lettermint-token' => $this->projectToken, 'accept' => 'application/json', 'user-agent' => UserAgent::value()];
         if (null !== $key = $email->getHeaders()->get('Idempotency-Key')) {
             $headers['Idempotency-Key'] = $key->getBodyAsString();
         }
