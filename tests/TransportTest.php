@@ -68,6 +68,28 @@ class TransportTest extends TestCase
         self::assertSame('lettermint+api://default', (string) $transport);
     }
 
+    public function testCustomHeaderValuesReachThePayloadAsPlainText(): void
+    {
+        $long = str_repeat('word ', 30).'end';
+        $client = new MockHttpClient(function ($method, $url, $options) use ($long) {
+            $body = json_decode($options['body'], true, flags: JSON_THROW_ON_ERROR);
+            self::assertSame('Zoë Café', $body['headers']['X-Customer']);
+            self::assertSame($long, $body['headers']['X-Long']);
+            self::assertSame('"Zoë Café" <zoe@example.com>', $body['headers']['X-Contact']);
+            self::assertSame('report; version=2', $body['headers']['X-Format']);
+            self::assertStringNotContainsString('=?', $options['body']);
+            self::assertStringNotContainsString('\\r\\n', $options['body']);
+
+            return new MockResponse('{"message_id":"api-id","status":"pending"}', ['http_code' => 202]);
+        });
+        $email = $this->email();
+        $email->getHeaders()->addTextHeader('X-Customer', 'Zoë Café');
+        $email->getHeaders()->addTextHeader('X-Long', $long);
+        $email->getHeaders()->addMailboxHeader('X-Contact', new Address('zoe@example.com', 'Zoë Café'));
+        $email->getHeaders()->addParameterizedHeader('X-Format', 'report', ['version' => '2']);
+        (new LettermintApiTransport('test-token', $client))->send($email);
+    }
+
     public function testEnvelopeOverridesRemoveOriginalRecipientsAndKeepBccPrivate(): void
     {
         $client = new MockHttpClient(function ($method, $url, $options) {

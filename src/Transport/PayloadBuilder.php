@@ -8,6 +8,11 @@ use Symfony\Component\Mailer\Header\MetadataHeader;
 use Symfony\Component\Mailer\Header\TagHeader;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Header\HeaderInterface;
+use Symfony\Component\Mime\Header\MailboxHeader;
+use Symfony\Component\Mime\Header\MailboxListHeader;
+use Symfony\Component\Mime\Header\ParameterizedHeader;
+use Symfony\Component\Mime\Header\UnstructuredHeader;
 use Symfony\Component\Mime\Part\AbstractMultipartPart;
 use Symfony\Component\Mime\Part\AbstractPart;
 use Symfony\Component\Mime\Part\DataPart;
@@ -71,7 +76,7 @@ final class PayloadBuilder
             if (in_array(strtolower($header->getName()), self::BYPASS_HEADERS, true)) {
                 continue;
             }
-            $headers[$header->getName()] = $header->getBodyAsString();
+            $headers[$header->getName()] = $this->plainHeaderValue($header);
         }
         if (null === $tag && null !== $legacy = $email->getHeaders()->get('X-LM-Tag')) {
             $tag = (string) $legacy->getBody();
@@ -87,6 +92,22 @@ final class PayloadBuilder
         }
 
         return array_replace($payload, $options);
+    }
+
+    /** The API encodes and folds header values itself, so send them unencoded. */
+    private function plainHeaderValue(HeaderInterface $header): string
+    {
+        // A parameterized header keeps its encoded form: its plain value would drop the parameters.
+        if ($header instanceof UnstructuredHeader && !$header instanceof ParameterizedHeader) {
+            return $header->getValue();
+        }
+        if ($header instanceof MailboxHeader || $header instanceof MailboxListHeader) {
+            $addresses = $header instanceof MailboxHeader ? [$header->getAddress()] : $header->getAddresses();
+
+            return implode(', ', array_map(static fn (Address $address): string => $address->toString(), $addresses));
+        }
+
+        return $header->getBodyAsString();
     }
 
     /** @return array<string, list<string>> */
@@ -145,7 +166,7 @@ final class PayloadBuilder
         if ($part instanceof DataPart) {
             $headers = $part->getPreparedHeaders();
             $contentType = clone $headers->get('Content-Type');
-            if ($contentType instanceof \Symfony\Component\Mime\Header\ParameterizedHeader) {
+            if ($contentType instanceof ParameterizedHeader) {
                 $parameters = $contentType->getParameters();
                 unset($parameters['name']);
                 $contentType->setParameters($parameters);
