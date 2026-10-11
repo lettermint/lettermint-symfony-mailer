@@ -68,6 +68,20 @@ class TransportTest extends TestCase
         self::assertSame('lettermint+api://default', (string) $transport);
     }
 
+    public function testRequestCarriesTheInstalledPackageVersionInTheUserAgent(): void
+    {
+        $client = new MockHttpClient(function ($method, $url, $options) {
+            $userAgents = preg_grep('/^user-agent: /i', $options['headers']);
+            self::assertCount(1, $userAgents);
+            $userAgent = substr((string) reset($userAgents), strlen('user-agent: '));
+            self::assertMatchesRegularExpression('#^lettermint-symfony-mailer/\S+$#', $userAgent);
+            self::assertNotSame('lettermint-symfony-mailer/0.1.0', $userAgent);
+
+            return new MockResponse('{"message_id":"api-id","status":"pending"}', ['http_code' => 202]);
+        });
+        (new LettermintApiTransport('test-token', $client))->send($this->email());
+    }
+
     public function testEnvelopeOverridesRemoveOriginalRecipientsAndKeepBccPrivate(): void
     {
         $client = new MockHttpClient(function ($method, $url, $options) {
