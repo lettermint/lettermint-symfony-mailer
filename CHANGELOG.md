@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.1.0 - 2026-10-11
+
+### What's Changed
+
+* chore: add all team as code owners by @bjarn in https://github.com/lettermint/lettermint-symfony-mailer/pull/7
+* Use the SDK release bot for changelog updates by @bjarn in https://github.com/lettermint/lettermint-symfony-mailer/pull/8
+* chore(deps): bump actions/create-github-app-token from 2.2.2 to 3.2.0 by @dependabot[bot] in https://github.com/lettermint/lettermint-symfony-mailer/pull/9
+* Read the release bot identity from GitHub by @bjarn in https://github.com/lettermint/lettermint-symfony-mailer/pull/10
+* fix: send the installed package version in the User-Agent by @bjarn in https://github.com/lettermint/lettermint-symfony-mailer/pull/11
+* fix: send custom header values as plain text by @bjarn in https://github.com/lettermint/lettermint-symfony-mailer/pull/12
+
+**Full Changelog**: https://github.com/lettermint/lettermint-symfony-mailer/compare/1.0.1...1.1.0
+
 ## 1.0.1 - 2026-09-07
 
 ### What's Changed
