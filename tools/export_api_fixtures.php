@@ -14,7 +14,7 @@ $mail->scheduledAt = null;
 $fixtures['immediate'] = $method->invoke($controller, $mail);
 $mail->scheduledAt = Carbon\CarbonImmutable::parse('2026-09-08T12:00:00Z');
 $fixtures['scheduled'] = $method->invoke($controller, $mail);
-$fixtures['request_fields'] = array_keys((new App\Http\Requests\Api\V1\SendMailRequest())->rules());
+$fixtures['request_fields'] = array_keys((new App\Http\Requests\Api\V1\SendMailRequest())->rules($app->make(App\Services\Messages\MessageRules::class)));
 $fixtures['tls'] = array_column(App\Enums\TlsPolicy::cases(), 'value');
 foreach ($app['router']->getRoutes() as $route) {
     if ($route->uri() === 'v1/send') {
