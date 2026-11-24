@@ -25,8 +25,10 @@ jobs:
             symfony: '6.4.*'
           - php: '8.2'
             symfony: '7.4.*'
+          # Symfony 8.0 is out of maintenance, and every 8.0 release has open security
+          # advisories that Composer refuses to install.
           - php: '8.4'
-            symfony: '8.0.*'
+            symfony: '8.1.*'
           - php: '8.5'
             symfony: '8.1.*'
     steps:
