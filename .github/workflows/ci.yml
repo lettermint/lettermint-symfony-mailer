@@ -13,6 +13,15 @@ concurrency:
   group: ci-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Composer 2.9+ refuses to install versions with security advisories, abandoned
+  # packages and (2.11+) releases still in their cooldown period. CI must install
+  # every version composer.json supports, so CI turns that blocking off.
+  # COMPOSER_NO_BLOCKING is the 2.11+ name; COMPOSER_NO_SECURITY_BLOCKING covers
+  # 2.9 and 2.10.
+  COMPOSER_NO_BLOCKING: 1
+  COMPOSER_NO_SECURITY_BLOCKING: 1
+
 jobs:
   test:
     timeout-minutes: 20
@@ -26,7 +35,7 @@ jobs:
           - php: '8.2'
             symfony: '7.4.*'
           # Symfony 8.0 is out of maintenance, and every 8.0 release has open security
-          # advisories that Composer refuses to install.
+          # advisories, so the composer audit step below would fail on it.
           - php: '8.4'
             symfony: '8.1.*'
           - php: '8.5'
